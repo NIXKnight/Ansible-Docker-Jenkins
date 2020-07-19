@@ -1,0 +1,19 @@
+dependencies: []
+galaxy_info:
+  author: Saad Ali
+  description: Ansible role for deploying Jenkins Docker container using [Docker-Jenkins](https://github.com/NIXKnight/Docker-Jenkins) [Docker image](https://hub.docker.com/r/nixknight/jenkins).
+  license: license (MIT)
+  min_ansible_version: 2.9
+  platforms:
+  - name: Debian
+    versions:
+      - stretch
+      - buster
+  - name: Ubuntu
+    versions:
+      - xenial
+      - bionic
+      - focal
+  galaxy_tags:
+    - docker
+    - jenkins
