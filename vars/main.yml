@@ -1,0 +1,4 @@
+---
+# defaults file for Ansible-Docker-Jenkins
+docker_jenkins_exposed_port: "8080"
+docker_jenkins_data_mount_point: "/var/jenkins_home"

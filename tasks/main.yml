@@ -1,2 +1,54 @@
 ---
 # tasks file for Ansible-Docker-Jenkins
+- name: Check if Jenkins Container is Running
+  docker_container_info:
+    name: "{{ DOCKER_JENKINS_CONTAINER_NAME }}"
+  register: docker_jenkins_container
+  tags:
+    - "install"
+    - "update"
+
+- name: Check if Jenkins Data Volume Exists
+  docker_volume_info:
+    name: "{{ DOCKER_JENKINS_DATA_VOLUME_NAME }}"
+  register: docker_jenkins_data_volume
+  tags:
+    - "install"
+
+- name: Stop and Remove Jenkins Container
+  docker_container:
+    name: "{{ DOCKER_JENKINS_CONTAINER_NAME }}"
+    state: "absent"
+  when: docker_jenkins_container.exists
+  tags:
+    - "install"
+    - "update"
+
+- name: Create Jenkins Data Docker Volume
+  docker_volume:
+    name: "{{ DOCKER_JENKINS_DATA_VOLUME_NAME }}"
+  when: not docker_jenkins_data_volume.exists
+  tags:
+    - "install"
+
+- name: Pull Jenkins Version {{ DOCKER_JENKINS_IMAGE_VERSION }} Docker Image
+  docker_image:
+    name: "{{ DOCKER_JENKINS_IMAGE_VERSION }}"
+    source: pull
+  tags:
+    - "install"
+    - "update"
+
+- name: Start Jenkins Docker Container
+  docker_container:
+    name: "{{ DOCKER_JENKINS_CONTAINER_NAME }}"
+    image: "{{ DOCKER_JENKINS_IMAGE_VERSION }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ DOCKER_JENKINS_HOST_PORT_MAPPING }}:{{ docker_jenkins_exposed_port }}"
+    volumes:
+      - "{{ DOCKER_JENKINS_DATA_VOLUME_NAME }}:{{ docker_jenkins_data_mount_point }}"
+  tags:
+    - "install"
+    - "update"

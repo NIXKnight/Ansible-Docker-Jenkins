@@ -1,2 +1,6 @@
 ---
 # defaults file for Ansible-Docker-Jenkins
+DOCKER_JENKINS_IMAGE_VERSION: "nixknight/jenkins:lts-latest"
+DOCKER_JENKINS_HOST_PORT_MAPPING: "127.0.0.1:8080"
+DOCKER_JENKINS_CONTAINER_NAME: "jenkins"
+DOCKER_JENKINS_DATA_VOLUME_NAME: "jenkins_data"
