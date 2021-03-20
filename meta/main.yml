@@ -1,4 +1,15 @@
-dependencies: []
+dependencies:
+  - role: docker_container
+    DOCKER_CONTAINER_NAME: "{{ DOCKER_JENKINS_CONTAINER_NAME }}"
+    DOCKER_CONTAINER_IMAGE: "{{ DOCKER_JENKINS_IMAGE }}"
+    DOCKER_CONTAINER_RESTART_POLICY: "{{ DOCKER_JENKINS_CONTAINER_RESTART_POLICY }}"
+    DOCKER_CONTAINER_VOLUME_MAPPING: "{{ DOCKER_JENKINS_VOLUMES_MAPPING }}"
+    DOCKER_CONTAINER_PORT_MAPPING: "{{ DOCKER_JENKINS_PORT_MAPPING }}"
+    DOCKER_CONTAINER_ENVIRONMENT_VARS: "{{ DOCKER_JENKINS_ENVIRONMENT_VARS }}"
+    DOCKER_VOLUMES: "{{ DOCKER_JENKINS_DATA_VOLUMES }}"
+    DOCKER_EXPOSE_PORTS: "{{ DOCKER_JENKINS_EXPOSE_PORTS }}"
+    DOCKER_NETWORK_NAME: "{{ DOCKER_JENKINS_NETWORK_NAME }}"
+
 galaxy_info:
   author: Saad Ali
   description: Ansible role for deploying Jenkins Docker container using [Docker-Jenkins](https://github.com/NIXKnight/Docker-Jenkins) [Docker image](https://hub.docker.com/r/nixknight/jenkins).
