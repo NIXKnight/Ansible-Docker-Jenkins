@@ -1,3 +1,7 @@
+upstream jenkins_upstream {
+    server {{ DOCKER_JENKINS_NGINX_UPSTREAM }} fail_timeout=0;
+}
+
 server {
   listen {{ DOCKER_JENKINS_NGINX_PORT }};
   server_name {{ DOCKER_JENKINS_DOMAIN_NAME }};
@@ -17,9 +21,9 @@ server {
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Host $host;
-    proxy_pass http://{{ DOCKER_JENKINS_HOST_PORT_MAPPING }};
+    proxy_pass http://jenkins_upstream;
     proxy_read_timeout 90;
-    proxy_redirect http://{{ DOCKER_JENKINS_HOST_PORT_MAPPING }} $scheme://{{ DOCKER_JENKINS_DOMAIN_NAME }};
+    proxy_redirect http://jenkins_upstream $scheme://{{ DOCKER_JENKINS_DOMAIN_NAME }};
     proxy_http_version 1.1;
     proxy_request_buffering off;
   }
