@@ -22,13 +22,17 @@
 
 - name: Get Jenkins Crumb
   uri:
-    url: '{{ DOCKER_JENKINS_URL }}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+    url: '{{ DOCKER_JENKINS_URL }}/crumbIssuer/api/json'
     user: "{{ DOCKER_JENKINS_USERNAME }}"
     password: "{{ DOCKER_JENKINS_PASSWORD }}"
     force_basic_auth: yes
     return_content: yes
+    status_code: 200
   when: DOCKER_JENKINS_SET_CREDENTIALS
   register: docker_jenkins_crumb
+  until: docker_jenkins_crumb.status == 200
+  retries: 10
+  delay: 5
   tags:
     - "install"
     - "configure"
@@ -41,8 +45,10 @@
     password: "{{ DOCKER_JENKINS_PASSWORD }}"
     force_basic_auth: yes
     method: "POST"
+    status_code: 302
     headers:
-      Jenkins-Crumb: "{{ docker_jenkins_crumb.content.split(':')[1] }}"
+      Jenkins-Crumb: "{{ docker_jenkins_crumb.json.crumb }}"
+      Cookie: "{{ docker_jenkins_crumb.set_cookie }}"
     body: |
       json={{ item | to_nice_json }}
   with_items: "{{ DOCKER_JENKINS_CREDENTIALS }}"
