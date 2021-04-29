@@ -19,3 +19,35 @@
   tags:
     - "install"
     - "configure"
+
+- name: Get Jenkins Crumb
+  uri:
+    url: '{{ DOCKER_JENKINS_URL }}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+    user: "{{ DOCKER_JENKINS_USERNAME }}"
+    password: "{{ DOCKER_JENKINS_PASSWORD }}"
+    force_basic_auth: yes
+    return_content: yes
+  when: DOCKER_JENKINS_SET_CREDENTIALS
+  register: docker_jenkins_crumb
+  tags:
+    - "install"
+    - "configure"
+    - "credentials"
+
+- name: Set Credentials
+  uri:
+    url: '{{ DOCKER_JENKINS_URL }}/credentials/store/system/domain/_/createCredentials'
+    user: "{{ DOCKER_JENKINS_USERNAME }}"
+    password: "{{ DOCKER_JENKINS_PASSWORD }}"
+    force_basic_auth: yes
+    method: "POST"
+    headers:
+      Jenkins-Crumb: "{{ docker_jenkins_crumb.content.split(':')[1] }}"
+    body: |
+      json={{ item | to_nice_json }}
+  with_items: "{{ DOCKER_JENKINS_CREDENTIALS }}"
+  when: DOCKER_JENKINS_SET_CREDENTIALS
+  tags:
+    - "install"
+    - "configure"
+    - "credentials"
